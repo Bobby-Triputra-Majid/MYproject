@@ -1,6 +1,8 @@
 <?php
 
-$page = isset($_GET['page']) ? $_GET['page'] : "home";
+include 'database/connect.php';
+$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+
 function loadPage($page): void
 {
   switch ($page) {
@@ -14,7 +16,7 @@ function loadPage($page): void
       include 'file_/register.php';
       break;
     default:
-      echo "404 - Halaman tidak tersedia";
+      include "file_/notfound.php";
       break;
   }
 }

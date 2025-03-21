@@ -15,7 +15,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-black border-bottom border-5 border-info">
         <div class="container-fluid">
-            <img src="../image/logo.png" style="width: 75px; height: 55px;">
+            <img src="./img/logo.png" style="width: 75px; height: 55px;">
             <a class="navbar-brand text-white fw-bold" href="index.php?page=home">
                 <h1 class="mb-0"><b>&nbsp; Stark</b></h1>
             </a>
@@ -50,8 +50,9 @@
                         </ul>
                     </li>
                 </ul>
-                <a href="index.php?page=login" class="btn btn-info fw-bolder" style="border-radius: 30px;">Login Now <i
-                        class="bi bi-arrow-right"></i></a>
+                <a href="?page=login" class="btn btn-info fw-bolder" style="border-radius: 30px;">
+                    Login Now <i class="bi bi-arrow-right"></i>
+                </a>
             </div>
         </div>
     </nav>
