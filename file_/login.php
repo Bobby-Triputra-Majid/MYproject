@@ -1,164 +1,200 @@
-<?php include './_partials/_template/nav.php'; ?>
-<?php include "database/connect.php"; ?>
-
 <?php
-session_start();
-require "database/connect.php"; // Ensure the database is connected
+include 'database/connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form input
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+// Proses login jika form disubmit
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-    if (empty($email) || empty($password)) {
-        echo "All fields are required!";
-        exit();
-    }
+    // Query untuk mencari pengguna berdasarkan email
+    $stmt = $conn->prepare("SELECT id, fullname, email, password, role_id FROM tb_users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Check if the user exists
-    $query = "SELECT id, username, password FROM users WHERE email = ?";
-    if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        // Verifikasi password
+        if (password_verify($password, $user['password'])) {
+            // Simpan data pengguna ke session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['fullname'] = $user['fullname'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role_id'] = $user['role_id'];
 
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $username, $hashed_password);
-            $stmt->fetch();
-
-            // Verify password
-            if (password_verify($password, $hashed_password)) {
-                $_SESSION["user_id"] = $id;
-                $_SESSION["username"] = $username;
-
-                // Redirect to dashboard
-                header("Location: dashboard.php");
-                exit();
-            } else {
-                echo "Invalid email or password!";
+            // Redirect berdasarkan role (opsional)
+            if ($user['role_id'] == 2) { // Admin
+                header("Location: index.php?page=admin_dashboard");
+            } else { // User biasa
+                header("Location: index.php?page=user_dashboard");
             }
+            exit();
         } else {
-            echo "No account found with this email!";
+            $error = "Invalid password!";
         }
-        $stmt->close();
     } else {
-        echo "Database error: " . $conn->error;
+        $error = "Email not found!";
     }
-    $conn->close();
+    $stmt->close();
 }
 ?>
-<style>
-    body {
-        background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
-        color: #ffffff;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-    }
+<?php include './_partial/_template/header.php'; ?>
+<?php if (isset($error)): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo $error; ?>
+    </div>
+<?php endif; ?>
 
-    .navbar-brand h1 {
-        font-size: 2rem;
-        margin: 0;
-    }
+<!DOCTYPE html>
+<html lang="en">
 
-    .nav-link {
-        font-size: 1.2rem;
-    }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-    .btn-info {
-        background-color: #0dcaf0;
-        border: none;
-        padding: 10px 20px;
-        font-size: 1.2rem;
-    }
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-    .btn-info:hover {
-        background-color: #0aa8d0;
-    }
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+            gap: 50px;
+            /* Jarak antara gambar dan formulir */
+        }
 
-    .form {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 400px;
-    }
+        .login-image {
+            flex: 1;
+            max-width: 500px;
+            /* Lebar maksimum gambar */
+        }
 
-    .form-title {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
+        .login-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            /* Tambahkan border-radius untuk gambar */
+        }
 
-    .input-container {
-        margin-bottom: 1rem;
-    }
+        .login-form {
+            flex: 1;
+            max-width: 400px;
+            /* Lebar maksimum formulir */
+        }
 
-    .input-container input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 1rem;
-    }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+            /* Warna teks di dalam card */
+        }
 
-    .submit {
-        width: 100%;
-        padding: 10px;
-        background-color: #0dcaf0;
-        border: none;
-        border-radius: 5px;
-        color: #fff;
-        font-size: 1rem;
-        cursor: pointer;
-    }
+        .form-floating {
+            margin-bottom: 1rem;
+        }
 
-    .submit:hover {
-        background-color: #0aa8d0;
-    }
+        .form-floating input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            /* Warna teks input */
+        }
 
-    .signup-link {
-        text-align: center;
-        margin-top: 1rem;
-    }
+        .form-floating input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            /* Warna placeholder */
+        }
 
-    .signup-link a {
-        color: #0dcaf0;
-        text-decoration: none;
-    }
+        .btn-primary {
+            background-color: #0dcaf0;
+            border: none;
+        }
 
-    .signup-link a:hover {
-        text-decoration: underline;
-    }
-</style>
+        .btn-primary:hover {
+            background-color: #0aa8d0;
+        }
+    </style>
+</head>
 
-<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
-    <div class="row w-100 justify-content-center">
-        <!-- Kolom Gambar (Kiri) -->
-        <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <img src="./img/AI_FLIP.png" alt="AI Image" class="img-fluid" style="max-height: 80vh;">
-        </div>
+<body>
+    <div class="login-container">
+        <div class="login-wrapper">
+            <!-- Gambar di sebelah kiri -->
+            <div class="login-image">
+                <img src="img/AI_FLIP.png" alt="AI Logo">
+            </div>
 
-        <!-- Kolom Formulir (Kanan) -->
-        <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <form class="form">
-                <p class="form-title">Login</p>
-                <div class="input-container">
-                    <input type="email" placeholder="Enter email">
+            <!-- Form Login di sebelah kanan -->
+            <div class="login-form">
+                <div class="card">
+                    <h1 class="h3 mb-3 fw-normal text-center">Login Now</h1>
+                    <form action="" method="POST">
+                        <div class="form-floating">
+                            <input type="email" name="email" class="form-control" id="floatingInput"
+                                placeholder="name@example.com" required>
+                            <label for="floatingInput">Email</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" name="password" class="form-control" id="floatingPassword"
+                                placeholder="Password" required>
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center mt-1 mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Login</button>
+                        <div class="text-center mt-3">
+                            Belum memiliki akun? <a href="?page=register">Sign Up</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="input-container">
-                    <input type="password" placeholder="Enter password">
-                </div>
-                <button type="submit" class="submit">
-                    Sign in
-                </button>
-                <p class="signup-link">
-                    No account?
-                    <a href="?page=register">Sign up</a>
-                </p>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+
+    <footer class="bg-black text-white text-center mt-auto py-2" style="padding: 20px 0;">
+        <div class="container">
+            <b>&copy; <b>OUR SOCIAL MEDIA</b></p>
+                <div>
+                    <a href="https://www.instagram.com" target="_blank" class="text-white mx-2">
+                        <i class="fab fa-instagram fa-2x"></i>
+                    </a>
+                    <a href="https://www.facebook.com" target="_blank" class="text-white mx-2">
+                        <i class="fab fa-facebook fa-2x"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="text-white mx-2">
+                        <i class="fab fa-twitter fa-2x"></i>
+                    </a>
+                </div>
+        </div>
+    </footer>
+</body>
+
+</html>

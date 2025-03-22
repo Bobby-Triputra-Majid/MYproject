@@ -1,212 +1,128 @@
-<?php include "./_partials/_template/nav.php" ?>
-<?php include "./database/connect.php"; ?>
-
 <?php
-include "database/connect.php"; // Include the database connection
+include "database/connect.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
-    $username = trim($_POST["username"]);
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
+    $email = $_POST['email'];
+    $fullname = $_POST['fullname'];
+    $jenis_kelamin = isset($_POST['jenis_kelamin']) ? (int) $_POST['jenis_kelamin'] : null; // Ensure it's an integer
+    $no_telp = isset($_POST['no_telp']) ? $_POST['no_telp'] : ''; // Check if no_telp is set
+    $alamat = $_POST['alamat'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $image = isset($_POST['image']) && !empty($_POST['image']) ? $_POST['image'] : '';
+    $role_id = 1; // Default role ID, adjust as necessary
+    $created_at = date('Y-m-d H:i:s');
+    $update_at = date('Y-m-d H:i:s'); // Set to null initially
 
-    // Hash the password for security
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-    // Check if email or username already exists
-    $check_query = "SELECT * FROM users WHERE email = ? OR username = ?";
-    $stmt = $conn->prepare($check_query);
-    $stmt->bind_param("ss", $email, $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Check if email already exists
+    $query_check = "SELECT * FROM tb_users WHERE email = ?";
+    $stmt_check = $conn->prepare($query_check);
+    $stmt_check->bind_param("s", $email);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
 
-    if ($result->num_rows > 0) {
-        echo "Username or Email already exists!";
+    if ($result_check->num_rows > 0) {
+        echo "<script> alert ('Maaf email sudah terdaftar');</script>";
+        echo '<meta http-equiv="refresh" content="0.8; url=?page=register">';
     } else {
-        // Insert new user into database
-        $insert_query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($insert_query);
-        $stmt->bind_param("sss", $username, $email, $hashed_password);
+        // Insert data
+        $query_insert = "INSERT INTO tb_users (fullname, email, password, jenis_kelamin, no_telp, alamat, image, role_id, created_at, update_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt_insert = $conn->prepare($query_insert);
+        $stmt_insert->bind_param("ssssssisss", $fullname, $email, $password, $jenis_kelamin, $no_telp, $alamat, $image, $role_id, $created_at, $update_at);
 
-        if ($stmt->execute()) {
-            echo "Registration successful!";
-            header("Location: index.php?page=login"); // Redirect to login page
-            exit();
+        // Jalankan pernyataan insert
+        if ($stmt_insert->execute()) {
+            echo "<script> alert ('Daftar Berhasil, Silahkan Login !!');</script>";
+            echo '<meta http-equiv="refresh" content="0.8; url=?page=login">';
         } else {
-            echo "Error: " . $stmt->error;
+            echo "<script> alert ('Terjadi kesalahan saat mendaftar: " . $stmt_insert->error . "');</script>";
         }
     }
 
-    $stmt->close();
+
+
+    $stmt_check->close();
+    $conn->close();
 }
-$conn->close();
 ?>
+<?php include './_partial/_template/header.php'; ?>
 
+<head>
+    <link rel="stylesheet" href="css/register.css">
 
-<style>
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
-        color: #ffffff;
-        /* Warna teks default */
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    .register-container {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .register-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        max-width: 1200px;
-        width: 100%;
-        gap: 50px;
-        /* Jarak antara gambar dan formulir */
-    }
-
-    .register-image {
-        flex: 1;
-        max-width: 500px;
-        /* Lebar maksimum gambar */
-    }
-
-    .register-image img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
-        /* Tambahkan border-radius untuk gambar */
-    }
-
-    .register-form {
-        flex: 1;
-        max-width: 500px;
-        /* Lebar maksimum formulir */
-    }
-
-    .card {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        border-radius: 10px;
-        padding: 2rem;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        color: #ffffff;
-        /* Warna teks di dalam card */
-    }
-
-    .form-label {
-        color: #ffffff;
-        /* Warna teks label */
-    }
-
-    .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #ffffff;
-        /* Warna teks input */
-    }
-
-    .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-        /* Warna placeholder */
-    }
-
-    .btn-success {
-        background-color: #28a745;
-        border: none;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-    }
-
-    .btn-primary {
-        background-color: #0dcaf0;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background-color: #0aa8d0;
-    }
-
-    footer {
-        flex-shrink: 0;
-        background-color: #0dcaf0;
-        color: #ffffff;
-        text-align: center;
-        padding: 0.5rem 0;
-        /* Footer lebih kecil */
-        font-size: 0.9rem;
-        /* Ukuran teks footer lebih kecil */
-    }
-
-    footer a {
-        color: #ffffff;
-        text-decoration: none;
-    }
-
-    footer a:hover {
-        text-decoration: underline;
-    }
-
-    footer .fab {
-        font-size: 1.2rem;
-        /* Ukuran ikon sosial media */
-        margin: 0 0.5rem;
-        /* Jarak antara ikon */
-    }
-</style>
 </head>
 
-<body>
-    <div class="container register-container">
-        <div class="register-wrapper">
-            <!-- Gambar di sebelah kiri -->
-            <div class="register-image">
-                <img src="./img/AI_FLIP.png" alt="AI Logo">
-            </div>
+<body style="background-color: beige;">
 
-            <!-- Form Register di sebelah kanan -->
-            <div class="register-form">
-                <div class="card p-4">
-                    <h3 class="text-center mb-3">Register to Stark AI</h3>
-                    <form action="?page=register" method="post">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                placeholder="Enter Username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Enter Password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm-password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirm-password" name="confirm-password"
-                                placeholder="Confirm Password" required>
-                        </div>
-                        <a href="index.php?page=login" class="btn btn-primary w-100 mt-2">Register</a>
-                        </button>
-                    </form>
-                </div>
-            </div>
+
+    <div class="container Register-container">
+        <div class="Register-image">
+            <img src="img/AI_FLIP.png" alt="AI Logo">
+        </div>
+
+        <div class="col-lg-4 d-flex align-items-center justify-content-center">
+            <main class="form-signin w-75">
+                <form method="POST">
+                    <h1 class="h3 mb-3 fw-normal text-light text-center">Register Now</h1>
+
+                    <div class="form-floating">
+                        <input type="email" name="email" class="form-control" id="floatingInput"
+                            placeholder="name@example.com">
+                        <label for="floatingInput">Email</label>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <input type="text" name="fullname" class="form-control" id="floatingInput"
+                            placeholder="name@example.com">
+                        <label for="floatingInput">Username</label>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <input type="password" name="password" class="form-control" id="floatingPassword"
+                            placeholder="Password" required>
+                        <label for="floatingPassword">Password</label>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <select name="jenis_kelamin" class="form-control" id="floatingGender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Laki-laki</option>
+                            <option value="female">Perempuan</option>
+                        </select>
+                        <label for="floatingGender">Jenis Kelamin</label>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <input type="tel" name="no_telp" class="form-control" id="floatingPhone"
+                            placeholder="No Telepon" required>
+                        <label for="floatingPhone">No Telepon</label>
+                    </div>
+                    <div class="form-floating mt-1">
+                        <textarea name="alamat" class="form-control" id="floatingAddress" placeholder="Alamat"
+                            required></textarea>
+                        <label for="floatingAddress">Alamat</label>
+                    </div>
+
+
+                    <button class="btn btn-primary w-100 py-2 mt-3" type="submit" name="register">Register</button>
+
+
+                </form>
+            </main>
+
         </div>
     </div>
-</body>
-
-</html>
+    </div>
+    <footer class="bg-dark text-white text-center ">
+        <div class="container">
+            <p>&copy; <b>OUR SOCIAL MEDIA</b></p>
+            <div>
+                <a href="https://www.instagram.com" target="_blank" class="text-white mx-2">
+                    <i class="fab fa-instagram fa-2x"></i>
+                </a>
+                <a href="https://www.facebook.com" target="_blank" class="text-white mx-2">
+                    <i class="fab fa-facebook fa-2x"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="text-white mx-2">
+                    <i class="fab fa-twitter fa-2x"></i>
+                </a>
+            </div>
+        </div>
+    </footer>

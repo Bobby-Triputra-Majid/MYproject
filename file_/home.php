@@ -1,77 +1,7 @@
-<?php include "./_partials/_template/nav.php" ?>
-<!DOCTYPE html>
-<html lang="en">
+<?php include './_partial/_template/header.php'; ?>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Page</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    body {
-      background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .navbar-brand h1 {
-      font-size: 2rem;
-      margin: 0;
-    }
-
-    .nav-link {
-      font-size: 1.2rem;
-    }
-
-    .btn-info {
-      background-color: #0dcaf0;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1.2rem;
-    }
-
-    .btn-info:hover {
-      background-color: #0aa8d0;
-    }
-
-    footer {
-      background-color: #0dcaf0;
-      color: #ffffff;
-      text-align: center;
-      padding: 0.5rem 0;
-      /* Padding diperkecil */
-      margin-top: auto;
-      /* Footer akan selalu berada di bagian bawah */
-    }
-
-    footer p {
-      margin: 0;
-      font-size: 0.8rem;
-      /* Ukuran teks diperkecil */
-    }
-
-    footer a {
-      color: #ffffff;
-      text-decoration: none;
-      margin: 0 0.3rem;
-      /* Jarak antara ikon diperkecil */
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    footer .fab {
-      font-size: 1rem;
-      /* Ukuran ikon diperkecil */
-    }
-  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -151,32 +81,55 @@
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p>&copy; OUR SOCIAL MEDIA</p>
-      <div>
-        <a href="https://www.instagram.com" target="_blank">
-          <i class="fab fa-instagram"></i>
-        </a>
-        <a href="https://www.facebook.com" target="_blank">
-          <i class="fab fa-facebook"></i>
-        </a>
-        <a href="https://twitter.com" target="_blank">
-          <i class="fab fa-twitter"></i>
-        </a>
+  <!-- Testimonial Section -->
+  <div class="container my-5" style="margin-bottom: 50px;" id="section2"></div>
+  <h2 class="text-center mb-4 fw-bold">Testimoni</h2>
+  <marquee behavior="scroll" direction="left" scrollamount="10">
+    <div class="d-flex justify-content-center">
+      <div class="card testimonial-card mx-2">
+        <div class="card-body">
+          <p>"Sangat Membantu tugas tugas saya."</p>
+          <footer class="blockquote-footer">Suci</footer>
+        </div>
+      </div>
+      <div class="card testimonial-card mx-2">
+        <div class="card-body">
+          <p>"Luar Biasa!"</p>
+          <footer class="blockquote-footer">Chelsea Van Meijr</footer>
+        </div>
+      </div>
+      <div class="card testimonial-card mx-2">
+        <div class="card-body">
+          <p>"Serasa bermain curang memakai ini."</p>
+          <footer class="blockquote-footer">Bagas Dribble</footer>
+        </div>
+      </div>
+      <div class="card testimonial-card mx-2">
+        <div class="card-body">
+          <p>"SEPERTI DI FILM MARVEL!!!TIDAK ADA NGELAG"</p>
+          <footer class="blockquote-footer">Tom Holans</footer>
+        </div>
       </div>
     </div>
+  </marquee>
+  </div>
+
+  <footer class="bg-black text-white text-center mt-auto py-2" style="padding: 20px 0;">
+    <div class="container">
+      <b>&copy; <b>OUR SOCIAL MEDIA</b></p>
+        <div>
+          <a href="https://www.instagram.com" target="_blank" class="text-white mx-2">
+            <i class="fab fa-instagram fa-2x"></i>
+          </a>
+          <a href="https://www.facebook.com" target="_blank" class="text-white mx-2">
+            <i class="fab fa-facebook fa-2x"></i>
+          </a>
+          <a href="https://twitter.com" target="_blank" class="text-white mx-2">
+            <i class="fab fa-twitter fa-2x"></i>
+          </a>
+        </div>
+    </div>
   </footer>
-
-  <script>
-    function runFunction() {
-      alert("Run button clicked!");
-      // You can add more functionality here
-    }
-  </script>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>

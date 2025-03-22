@@ -1,28 +1,167 @@
+/* Global Styles */
 body {
-    background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000, #000000, #0dcaf0);
+  color: #000000;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar Styles */
+.navbar-brand h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.nav-link {
+  font-size: 1.2rem;
+}
+
+/* Button Styles */
+.btn-info,
+.btn-primary {
+  background-color: #0dcaf0;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.btn-info:hover,
+.btn-primary:hover {
+  background-color: #0aa8d0;
+}
+
+/* Login Container */
+.login-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  width: 100%;
+  gap: 50px; /* Jarak antara gambar dan formulir */
+}
+
+.login-image {
+  flex: 1;
+  max-width: 500px; /* Lebar maksimum gambar */
+  text-align: center;
+}
+
+.login-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Tambahkan border-radius untuk gambar */
+}
+
+.login-form {
+  flex: 1;
+  max-width: 400px; /* Lebar maksimum formulir */
+}
+
+/* Card Styles */
+.card,
+.welcome-card,
+.content-box {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #000000; /* Warna teks di dalam card */
+}
+
+.welcome-card {
+  background: white;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.content-box {
+  padding: 30px;
+  text-align: center;
+  height: 150px;
+  margin-bottom: 20px;
+}
+
+/* Avatar */
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+/* Form Styles */
+.form-floating {
+  margin-bottom: 1rem;
+}
+
+.form-floating input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff; /* Warna teks input */
+}
+
+.form-floating input::placeholder {
+  color: rgba(255, 255, 255, 0.5); /* Warna placeholder */
+}
+
+/* Footer Styles */
+footer {
+  flex-shrink: 0;
+  background-color: #0dcaf0;
+  color: #ffffff;
+  text-align: center;
+  padding: 0.5rem 0; /* Footer lebih kecil */
+  font-size: 0.9rem; /* Ukuran teks footer lebih kecil */
+}
+
+footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+footer .fab {
+  font-size: 1.2rem; /* Ukuran ikon sosial media */
+  margin: 0 0.5rem; /* Jarak antara ikon */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .login-wrapper {
+      flex-direction: column;
+      gap: 20px;
+  }
+
+  .login-image,
+  .login-form {
+      max-width: 100%;
+  }
+
+  .login-image img {
+      max-width: 80%;
+      margin: 0 auto;
   }
   
-  .navbar-brand h1 {
-    font-size: 2rem;
-    margin: 0;
-  }
-  
-  .nav-link {
-    font-size: 1.2rem;
-  }
-  
-  .btn-info {
-    background-color: #0dcaf0;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-  }
-  
-  .btn-info:hover {
-    background-color: #0aa8d0;
-  }
+}
